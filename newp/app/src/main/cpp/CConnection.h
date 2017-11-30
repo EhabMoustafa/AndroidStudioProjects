@@ -17,7 +17,7 @@
 #include <netdb.h>
 
 class CConnection {
-    int sockfd=0;
+    int sockfd=-1;
     const int portno_;
     struct sockaddr_in addr_;
     struct hostent *server;
@@ -27,7 +27,12 @@ public:
     int getPortNo()const{return portno_;}
      inline void clearSockAddr(){}
 
-    CConnection(const std::string server_name,int portno):server_name_(std::move(server_name)),portno_(portno){
+    CConnection(int sfd):sockfd(sfd),portno_(0){
+        if (sockfd < 0)
+            throw std::exception();
+    }
+
+    CConnection(int sfd=-1,const std::string server_name,int portno):server_name_(std::move(server_name)),portno_(portno){
         if(portno<300||portno>10000)
             throw std::exception();
         char buffer[256];
