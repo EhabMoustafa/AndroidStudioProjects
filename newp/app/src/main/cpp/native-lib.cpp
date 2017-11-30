@@ -2,6 +2,12 @@
 #include <string>
 #include <sstream>
 #include <opencv2/opencv.hpp>
+#include <thread>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netdb.h>
+
 
 template<class  T>
 std::string to_string(T t)

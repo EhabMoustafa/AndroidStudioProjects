@@ -18,17 +18,17 @@ import org.opencv.core.Mat;
 
 public class MainActivity extends AppCompatActivity implements CameraBridgeViewBase.CvCameraViewListener2
 
-
 {
-
     // Used to load the 'native-lib' library on application startup.
     static {
         System.loadLibrary("native-lib");
         System.loadLibrary("opencv_java3");
     }
+    Mat m_RGB;
     JavaCameraView javaCameraView;
-    BaseLoaderCallback baseLoaderCallback = new BaseLoaderCallback() {
-    public  Mat m_RGB;
+
+    BaseLoaderCallback baseLoaderCallback = new BaseLoaderCallback(this)
+    {
         @Override
         public void onManagerConnected(int status) {
             super.onManagerConnected(status);
@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
                 break;
             }
         }
-    }
+    };
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     public native String stringFromJNI();
 
     @Override
-    protected void OnPause()
+    protected void onPause()
     {
         super.onPause();
         if(javaCameraView != null)
@@ -83,15 +83,15 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     }
 
     @Override
-    protected void OnDestroy()
+    protected void onDestroy()
     {
         super.onDestroy();
         if(javaCameraView != null)
-            javaCameraView.destroyDrawingCache();
+            javaCameraView.disableView();
     }
 
     @Override
-    protected void OnResume()
+    protected void onResume()
     {
         super.onResume();
         if(OpenCVLoader.initDebug())
@@ -100,16 +100,22 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         } else {
             OpenCVLoader.initAsync( OpenCVLoader.OPENCV_VERSION_3_3_0,this,baseLoaderCallback);
         }   if(javaCameraView != null)
-        javaCameraView.disableView();
+        javaCameraView.enableView();
     }
 
     @Override
-    public void onCameraViewStarted(int width, int height) {
+    public  void onCameraViewStarted(int width, int height) {
         m_RGB = new Mat(height,width, CvType.CV_8UC4);
     }
 
     @Override
     public void onCameraViewStopped() {
+        m_RGB.release();
+    }
+
+    @Override
+    public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
+        m_RGB = inputFrame.rgba();
         return m_RGB;
     }
 }
