@@ -5,8 +5,13 @@
 #ifndef NEWP_CSERVER_H
 #define NEWP_CSERVER_H
 
+#include <vector>
+#include "CConnection.h"
+#include "CClient.h"
 
 class CServer {
+    std::vector<CClient> clients;
+    CConnection server_;
 
 
 };
