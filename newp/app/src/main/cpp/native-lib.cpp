@@ -16,9 +16,11 @@ JNIEXPORT jstring
 
 JNICALL
 Java_com_example_ehab_newp_MainActivity_stringFromJNI(
-        JNIEnv *env,
+       JNIEnv *env,
         jobject /* this */) {
-cv::VideoCapture Cap(0);
+    cv::Rect();
+    cv::Mat();
+    cv::VideoCapture Cap(0);
     std::string hello;
     if(Cap.isOpened())
         hello = "Camira is opened";

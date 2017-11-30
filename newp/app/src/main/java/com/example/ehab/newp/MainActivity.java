@@ -3,13 +3,14 @@ package com.example.ehab.newp;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
+import org.opencv.android.OpenCVLoader;
 
 public class MainActivity extends AppCompatActivity {
 
     // Used to load the 'native-lib' library on application startup.
     static {
         System.loadLibrary("native-lib");
-        System.loadLibrary("lib_opencv");    }
+        System.loadLibrary("opencv_java3");    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,6 +19,12 @@ public class MainActivity extends AppCompatActivity {
 
         // Example of a call to a native method
         TextView tv = (TextView) findViewById(R.id.sample_text);
+        if(OpenCVLoader.initDebug()){
+            tv.setText("On");
+
+        } else {
+            tv.setText("Off");
+        }
         tv.setText(stringFromJNI());
     }
 
