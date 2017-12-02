@@ -68,11 +68,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
     }
 
 
-    /**
-     * A native method that is implemented by the 'native-lib' native library,
-     * which is packaged with this application.
-     */
-    public native String stringFromJNI();
+
 
     @Override
     protected void onPause()
@@ -105,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
 
     @Override
     public  void onCameraViewStarted(int width, int height) {
-        m_RGB = new Mat(height,width, CvType.CV_8UC4);
+        m_RGB = new Mat(height,width, CvType.CV_8UC1);
     }
 
     @Override
@@ -118,4 +114,12 @@ public class MainActivity extends AppCompatActivity implements CameraBridgeViewB
         m_RGB = inputFrame.rgba();
         return m_RGB;
     }
+
+    /**
+     * A native method that is implemented by the 'native-lib' native library,
+     * which is packaged with this application.
+     */
+    public native String stringFromJNI();
+    public native Boolean initServer();
+
 }

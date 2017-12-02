@@ -11,6 +11,11 @@
 #include <string.h>
 #include <string>
 #include <vector>
+#include <list>
+//#include <>
+#include <thread>
+#include <memory>
+#include <deque>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -27,12 +32,12 @@ public:
     int getPortNo()const{return portno_;}
      inline void clearSockAddr(){}
 
-    CConnection(int sfd):sockfd(sfd),portno_(0){
+    CConnection(    struct sockaddr_in addr, int sfd):addr_(addr),sockfd(sfd),portno_(0){
         if (sockfd < 0)
             throw std::exception();
     }
 
-    CConnection(int sfd=-1,const std::string server_name,int portno):server_name_(std::move(server_name)),portno_(portno){
+    CConnection(const std::string server_name,int portno):server_name_(std::move(server_name)),portno_(portno){
         if(portno<300||portno>10000)
             throw std::exception();
         char buffer[256];
@@ -51,11 +56,21 @@ public:
         addr_.sin_port = htons(portno_);
     }
     bool connect(){
-        return (connect(sockfd,(struct sockaddr *) &addr_,sizeof(addr_)) >= 0);
+        return (::connect(sockfd,(struct sockaddr *) &addr_,sizeof(addr_)) >= 0);
      }
-    bool writeAsync(std::vector<char> v){
-        size_t  n = write(sockfd,&v[0],v.size());
+    bool write(char *&data,size_t size){
+        size_t  n = ::write(sockfd, data, size);
         return (n >= 0);
+    }
+
+    void writeImg(){
+        //size_t  n = ::write(sockfd, data, size);
+        //return (n >= 0);
+    }
+
+    void read(char *&buffer, size_t size){
+        size_t n = ::read(sockfd, buffer, size);
+        if (n < 0) throw std::exception();
     }
 
 bool closeConnection(){close(sockfd); }

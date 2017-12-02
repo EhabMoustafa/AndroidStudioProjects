@@ -4,6 +4,8 @@
 
 #ifndef NEWP_CCLIENT_H
 #define NEWP_CCLIENT_H
+#include "CConnection.h"
+
 
 
 class CClient {

@@ -32,8 +32,19 @@
     <Button
         android:id="@+id/button"
         android:layout_width="wrap_content"
+        android:layout_height="43dp"
+        android:text="Call"
+        tools:layout_editor_absoluteX="264dp"
+        tools:layout_editor_absoluteY="0dp" />
+
+    <EditText
+        android:id="@+id/editText"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Button"
-        tools:layout_editor_absoluteX="83dp"
+        android:layout_marginEnd="8dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Nam192.168.0.10"
+        app:layout_constraintEnd_toStartOf="@+id/button"
         tools:layout_editor_absoluteY="0dp" />
 </android.support.constraint.ConstraintLayout>

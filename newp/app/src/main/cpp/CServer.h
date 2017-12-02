@@ -10,15 +10,13 @@
 #include "CClient.h"
 
 class CServer {
-    std::vector<CClient> clients;
-    CConnection server_;
+
     int sockfd, newsockfd;
-    socklen_t clilen;
-    char buffer[1024];
-    struct sockaddr_in serv_addr, cli_addr;
+    struct sockaddr_in serv_addr;
+    std::list< std::pair<std::shared_ptr<CConnection>,std::shared_ptr<std::thread>> > clients;
 public:
     CServer(int portno) {
-        int n;
+
         sockfd = socket(AF_INET, SOCK_STREAM, 0);
         if (sockfd < 0)
             throw std::exception();
@@ -31,23 +29,47 @@ public:
             throw std::exception();
     }
 
-    void listen(){
-        listen(sockfd, 5);
-        clilen = sizeof(cli_addr);
-        newsockfd = accept(sockfd,
+  void read(char *buffer, size_t size) {
+
+      while(1) {
+          size_t n = ::read(newsockfd, buffer, size);
+          if (n < 0) throw std::exception();
+      }
+  }
+
+
+    void listen() {
+
+        std::shared_ptr<std::thread> th(new std::thread(&CServer::waitConnection,this));
+
+    }
+
+
+    void waitConnection(){
+
+        struct sockaddr_in cli_addr;
+
+        while(1){
+            ::listen(sockfd, 5);
+            socklen_t clilen = sizeof(cli_addr);
+            newsockfd = accept(sockfd,
                            (struct sockaddr *) &cli_addr,
                            &clilen);
-        if (newsockfd < 0)
-            throw std::exception();
-        bzero(buffer, 1024);
 
-        n = read(newsockfd, buffer, 1023);
-        if (n < 0) throw std::exception();
+            if (newsockfd < 0)
+              throw std::exception();
+            std::shared_ptr<CConnection> cc(new CConnection(cli_addr,newsockfd));
+            std::shared_ptr<std::thread> th(new std::thread(&CConnection::writeImg,cc.get()) );
+            clients.push_back(std::pair<std::shared_ptr<CConnection>,std::shared_ptr<std::thread>>(cc,th));
+    }
+    }
 
+
+   void close(){
     //    Mat image(690, 690, CV_8UC3, *buffer);
     //    imwrite("/home/securitas/images/prova.jpg", image);
-        close(newsockfd);
-        close(sockfd);
+
+        ::close(sockfd);
 
     }
 };
